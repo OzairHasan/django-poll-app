@@ -1,9 +1,16 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from polls.models import Question
+from django.utils import timezone
 # Create your views here.
 
+def questionCompareByPubDate(question):
+    return question.pub_date
+
 def index(request):
-    return HttpResponse("Wassup.")
+    questions = Question.objects.all()
+    questions = sorted(questions, key=questionCompareByPubDate)
+    return HttpResponse(questions)
 
 def detail(request, question_id):
     return HttpResponse("You're looking at question %s." % question_id)
