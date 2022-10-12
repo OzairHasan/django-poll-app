@@ -10,12 +10,17 @@ def questionCompareByPubDate(question):
     return question.pub_date
 
 def index(request):
-    questions = Question.objects.all()
+    questions = Question.objects.filter(pub_date__lte=timezone.now())
     questions = sorted(questions, key=questionCompareByPubDate)
-
+    
+    questions_out = []
+    for question in questions:
+        if question.choice_set.exists():
+            questions_out.append(question)
+    
     template = loader.get_template('polls/index.html')
     context = {
-        'latest_question_list': questions,
+        'latest_question_list': questions_out,
     }
     return HttpResponse(template.render(context, request))
 
